@@ -1,4 +1,4 @@
-package com.surajkamble.cozy_tracker.lib
+package com.surajkamble.cozy_tracker.lib.config
 
 import androidx.compose.runtime.Immutable
 
