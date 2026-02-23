@@ -9,7 +9,7 @@ package com.surajkamble.cozy_tracker.lib.config
  * @property trackStaleContent If `false`, the tracker will only report the first time an item is viewed and then ignore it.
  * @property trackingMode Defines the core behavior, such as tracking total time or only the first impression.
  */
-data class VisibilityConfig(
+data class CozyConfig(
     val minimumVisiblePercent: Float = 0.5f,
     val debounceIntervalMs: Long = 250L,
     val minDwellTimeMs: Long = 0L,

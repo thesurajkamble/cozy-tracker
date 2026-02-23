@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -28,8 +29,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.surajkamble.cozy_tracker.lib.config.VisibilityConfig
-import com.surajkamble.cozy_tracker.lib.internal.rememberCozyListState
+import com.surajkamble.cozy_tracker.lib.api.cozyTracker
+import com.surajkamble.cozy_tracker.lib.config.CozyConfig
+import com.surajkamble.cozy_tracker.lib.config.TrackingMode
+import com.surajkamble.cozy_tracker.lib.model.VisibilityEvent
 import com.surajkamble.cozy_tracker.ui.theme.Cozy_trackerTheme
 
 class MainActivity : ComponentActivity() {
@@ -38,10 +41,27 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             Cozy_trackerTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    TrackingSampleScreen(modifier = Modifier.padding(innerPadding))
-                }
+                    Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+                        TrackingSampleScreen(modifier = Modifier.padding(innerPadding))
+                    }
             }
+        }
+    }
+}
+
+/**
+ * A reusable callback function to handle and log visibility events.
+ */
+private fun onVisibilityEvent(listName: String, event: VisibilityEvent) {
+    when (event) {
+        is VisibilityEvent.DwellTime -> {
+            Log.d("CozyTracker - $listName", "[DWELL TIME]: Key=${event.key}, Total=${event.totalSeenTimeMs}ms")
+        }
+        is VisibilityEvent.Impression -> {
+            Log.d("CozyTracker - $listName", "[IMPRESSION]: Key=${event.key}, FirstSeen=${event.firstSeenAtMs}")
+        }
+        is VisibilityEvent.AppBackgrounded -> {
+            Log.d("CozyTracker - $listName", "[APP BACKGROUNDED]: ${event.flushedItems.size} items flushed. Timestamp: ${event.timestampMs}")
         }
     }
 }
@@ -55,7 +75,7 @@ fun TrackingSampleScreen(modifier: Modifier = Modifier) {
 
     Column(modifier = modifier.fillMaxSize()) {
         Text(
-            text = "Vertical List",
+            text = "Vertical List (Dwell Time)",
             style = MaterialTheme.typography.headlineMedium,
             modifier = Modifier.padding(16.dp)
         )
@@ -64,7 +84,7 @@ fun TrackingSampleScreen(modifier: Modifier = Modifier) {
         Spacer(modifier = Modifier.height(32.dp))
 
         Text(
-            text = "Horizontal List",
+            text = "Horizontal List (First Impression)",
             style = MaterialTheme.typography.headlineMedium,
             modifier = Modifier.padding(16.dp)
         )
@@ -74,21 +94,18 @@ fun TrackingSampleScreen(modifier: Modifier = Modifier) {
 
 @Composable
 private fun VerticalList(items: List<SampleItem>) {
-    val listState = rememberCozyListState(
-        onEvent = { event ->
-            Log.d("CozyTracker - Vertical", "Event: $event")
-        },
-        config = VisibilityConfig(
-            minimumVisiblePercent = 0.6f,
-            debounceIntervalMs = 300L
-        )
-    )
+    val listState = rememberLazyListState()
 
     LazyColumn(
         state = listState,
         modifier = Modifier
             .fillMaxWidth()
             .height(300.dp)
+            .cozyTracker(
+                listState = listState,
+                onDwellTime = { event -> onVisibilityEvent("Vertical", event) },
+                config = CozyConfig(minimumVisiblePercent = 0.6f)
+            )
     ) {
         items(items, key = { it.id }, contentType = { "vertical-item" }) { item ->
             Box(
@@ -107,16 +124,20 @@ private fun VerticalList(items: List<SampleItem>) {
 
 @Composable
 private fun HorizontalList(items: List<SampleItem>) {
-    val listState = rememberCozyListState(
-        onEvent = { event ->
-            Log.d("CozyTracker - Horizontal", "Event: $event")
-        },
-        config = VisibilityConfig(minimumVisiblePercent = 0.75f)
-    )
+    val listState = rememberLazyListState()
 
     LazyRow(
         state = listState,
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .cozyTracker(
+                listState = listState,
+                onImpression = { event -> onVisibilityEvent("Horizontal", event) },
+                config = CozyConfig(
+                    minimumVisiblePercent = 0.75f,
+                    trackingMode = TrackingMode.FIRST_IMPRESSION
+                )
+            ),
         contentPadding = PaddingValues(horizontal = 8.dp)
     ) {
         items(items, key = { it.id }, contentType = { "horizontal-item" }) { item ->
