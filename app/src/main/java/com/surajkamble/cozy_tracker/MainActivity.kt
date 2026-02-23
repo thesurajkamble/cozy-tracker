@@ -28,7 +28,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.surajkamble.cozy_tracker.lib.CozyTracker
+import com.surajkamble.cozy_tracker.lib.config.VisibilityConfig
+import com.surajkamble.cozy_tracker.lib.internal.rememberCozyListState
 import com.surajkamble.cozy_tracker.ui.theme.Cozy_trackerTheme
 
 class MainActivity : ComponentActivity() {
@@ -73,12 +74,11 @@ fun TrackingSampleScreen(modifier: Modifier = Modifier) {
 
 @Composable
 private fun VerticalList(items: List<SampleItem>) {
-    // Note the clean API: All calls are accessed via the CozyTracker object.
-    val listState = CozyTracker.rememberCozyListState(
+    val listState = rememberCozyListState(
         onEvent = { event ->
             Log.d("CozyTracker - Vertical", "Event: $event")
         },
-        config = CozyTracker.Config(
+        config = VisibilityConfig(
             minimumVisiblePercent = 0.6f,
             debounceIntervalMs = 300L
         )
@@ -107,12 +107,11 @@ private fun VerticalList(items: List<SampleItem>) {
 
 @Composable
 private fun HorizontalList(items: List<SampleItem>) {
-    // Using the single-import API with a different configuration.
-    val listState = CozyTracker.rememberCozyListState(
+    val listState = rememberCozyListState(
         onEvent = { event ->
             Log.d("CozyTracker - Horizontal", "Event: $event")
         },
-        config = CozyTracker.Config(minimumVisiblePercent = 0.75f)
+        config = VisibilityConfig(minimumVisiblePercent = 0.75f)
     )
 
     LazyRow(
