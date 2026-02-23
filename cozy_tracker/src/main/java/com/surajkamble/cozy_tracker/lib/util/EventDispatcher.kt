@@ -24,7 +24,6 @@ internal object EventDispatcher {
         val sessionData = state.endSession(key) ?: return
         val visibleDurationMs = time - sessionData.startTimeMs
 
-        // Respect the minimum dwell time configuration.
         if (visibleDurationMs > 0 && visibleDurationMs >= config.minDwellTimeMs) {
             val totalSeenTimeMs = state.updateTotalSeenTime(key, visibleDurationMs)
             val wasAlreadyDispatched = state.isStaleAndMark(key)
@@ -32,7 +31,6 @@ internal object EventDispatcher {
 
             val event = VisibilityEvent(
                 key = key,
-                contentType = sessionData.itemInfo.contentType,
                 isStaleContent = wasAlreadyDispatched,
                 visibleDurationMs = visibleDurationMs,
                 firstSeenAtMs = firstSeenTime,
@@ -40,7 +38,8 @@ internal object EventDispatcher {
                 totalSeenTimeMs = totalSeenTimeMs,
                 contentMetadata = ContentMetadata(
                     contentPosition = sessionData.itemInfo.index,
-                    scrollDirection = scrollDirection
+                    scrollDirection = scrollDirection,
+                    contentType = sessionData.itemInfo.contentType
                 )
             )
             onEvent(event)
