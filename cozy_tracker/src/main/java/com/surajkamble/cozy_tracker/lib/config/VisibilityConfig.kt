@@ -1,21 +1,20 @@
 package com.surajkamble.cozy_tracker.lib.config
 
-import androidx.compose.runtime.Immutable
-
 /**
  * Configuration for the visibility tracker.
  *
- * @property minimumVisiblePercent A value between 0.0 and 1.0, representing the percentage
- * of the item's height or width that must be visible to be considered "visible".
- * Defaults to 0.5f (50%).
- * @property debounceIntervalMs The time in milliseconds to wait after the last scroll event
- * before processing visibility changes. This helps to avoid processing rapid scroll events
- * and only calculate visibility when the list is settled. Defaults to 250ms.
+ * @property minimumVisiblePercent The percentage of an item that must be visible (0.0 to 1.0).
+ * @property debounceIntervalMs The time to wait after scrolling stops before processing visibility.
+ * @property minDwellTimeMs The minimum time an item must be visible to trigger a visibility event.
+ * @property trackStaleContent If `false`, the tracker will only report the first time an item is viewed and then ignore it.
+ * @property trackingMode Defines the core behavior, such as tracking total time or only the first impression.
  */
-@Immutable
 data class VisibilityConfig(
     val minimumVisiblePercent: Float = 0.5f,
-    val debounceIntervalMs: Long = 250L
+    val debounceIntervalMs: Long = 250L,
+    val minDwellTimeMs: Long = 0L,
+    val trackStaleContent: Boolean = true,
+    val trackingMode: TrackingMode = TrackingMode.DWELL_TIME
 ) {
     init {
         require(minimumVisiblePercent in 0.0f..1.0f) {
