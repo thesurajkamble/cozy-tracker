@@ -3,7 +3,7 @@ package com.surajkamble.cozy_tracker.lib.util
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.lazy.LazyListItemInfo
 import androidx.compose.foundation.lazy.LazyListLayoutInfo
-import com.surajkamble.cozy_tracker.lib.config.VisibilityConfig
+import com.surajkamble.cozy_tracker.lib.config.CozyConfig
 import kotlin.math.max
 import kotlin.math.min
 
@@ -13,7 +13,7 @@ import kotlin.math.min
 internal object VisibilityCalculator {
 
     /**
-     * Determines if a [LazyListItemInfo] is "visible" based on the [VisibilityConfig].
+     * Determines if a [LazyListItemInfo] is "visible" based on the [CozyConfig].
      *
      * @param itemInfo The item to check.
      * @param layoutInfo The [LazyListLayoutInfo] used to get viewport and orientation details.
@@ -23,7 +23,7 @@ internal object VisibilityCalculator {
     fun isVisible(
         itemInfo: LazyListItemInfo,
         layoutInfo: LazyListLayoutInfo,
-        config: VisibilityConfig
+        config: CozyConfig
     ): Boolean {
         val itemSize = itemInfo.size.toFloat()
         if (itemSize <= 0) return false

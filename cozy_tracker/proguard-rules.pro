@@ -4,15 +4,13 @@
 }
 
 # Keep the public data classes and their properties.
-# The -keepclassmembers rule ensures that the properties can be accessed.
--keep class com.surajkamble.cozy_tracker.lib.config.VisibilityConfig { *; }
+-keep class com.surajkamble.cozy_tracker.lib.config.CozyConfig { *; }
 -keep class com.surajkamble.cozy_tracker.lib.model.VisibilityEvent { *; }
 -keep class com.surajkamble.cozy_tracker.lib.model.ContentMetadata { *; }
 -keep class com.surajkamble.cozy_tracker.lib.model.ScrollDirection { *; }
 
 # For data classes, we must also keep the component functions (e.g., component1(), component2())
-# which are used for destructuring declarations.
--keepclassmembers class com.surajkamble.cozy_tracker.lib.config.VisibilityConfig {
+-keepclassmembers class com.surajkamble.cozy_tracker.lib.config.CozyConfig {
     public <methods>;
 }
 -keepclassmembers class com.surajkamble.cozy_tracker.lib.model.VisibilityEvent {
@@ -33,4 +31,13 @@
 -keepclassmembers enum com.surajkamble.cozy_tracker.lib.config.TrackingMode {
     public static **[] values();
     public static ** valueOf(java.lang.String);
+}
+
+# --- SCRIPT TO REMOVE LOGGING FROM RELEASE BUILDS ---
+# This rule tells the R8 compiler that calls to the Log class have no side effects.
+# This allows R8 to completely strip all Log.d, Log.v, etc., calls from the final release APK.
+-assumenosideeffects class android.util.Log {
+    public static *** d(...);
+    public static *** v(...);
+    public static *** i(...);
 }
