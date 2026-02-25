@@ -2,8 +2,7 @@ package com.surajkamble.cozy_tracker.lib.util
 
 import android.util.Log
 import com.surajkamble.cozy_tracker.lib.BuildConfig
-import com.surajkamble.cozy_tracker.lib.config.CozyConfig
-import com.surajkamble.cozy_tracker.lib.config.TrackingMode
+import com.surajkamble.cozy_tracker.lib.api.CozyConfig
 import com.surajkamble.cozy_tracker.lib.model.ContentMetadata
 import com.surajkamble.cozy_tracker.lib.model.ScrollDirection
 import com.surajkamble.cozy_tracker.lib.model.VisibilityEvent
@@ -19,24 +18,31 @@ internal object EventDispatcher {
      * Dispatches a [VisibilityEvent.DwellTime] event when an item's session ends.
      */
     fun dispatchDwellTimeEvent(
-        key: Any,
+        internalKey: Any,
         time: Long,
         scrollDirection: ScrollDirection,
         state: TrackerState,
         config: CozyConfig,
         onDwellTime: ((VisibilityEvent.DwellTime) -> Unit)?
     ) {
-        val sessionData = state.endSession(key) ?: return
+        val sessionData = state.endSession(internalKey) ?: return
         val visibleDurationMs = time - sessionData.startTimeMs
 
         if (visibleDurationMs > 0 && visibleDurationMs >= config.minDwellTimeMs) {
-            val totalSeenTimeMs = state.updateTotalSeenTime(key, visibleDurationMs)
-            val wasAlreadyDispatched = state.isStaleAndMark(key)
-            val firstSeenTime = state.getFirstSeenTime(key) ?: time
+            val totalSeenTimeMs = state.updateTotalSeenTime(internalKey, visibleDurationMs)
+            val wasAlreadyDispatched = state.checkIfStaleAndMark(internalKey)
+
+            // When stale content tracking is disabled, we only emit the first
+            // event for a given key and drop subsequent ones entirely.
+            if (wasAlreadyDispatched && !config.trackStaleContent) {
+                return
+            }
+
+            val firstSeenTime = state.getFirstSeenTime(internalKey) ?: time
 
             val event = VisibilityEvent.DwellTime(
-                key = key,
-                isStaleContent = wasAlreadyDispatched,
+                key = sessionData.analyticsKey,
+                isStaleContent = wasAlreadyDispatched && config.trackStaleContent,
                 visibleDurationMs = visibleDurationMs,
                 firstSeenAtMs = firstSeenTime,
                 lastSeenAtMs = time,
@@ -51,7 +57,12 @@ internal object EventDispatcher {
             if (BuildConfig.DEBUG) {
                 Log.d(INTERNAL_LOG_TAG, "Dispatching DwellTime Event: $event")
             }
-            onDwellTime?.invoke(event)
+
+            try {
+                onDwellTime?.invoke(event)
+            } catch (t: Throwable) {
+                Log.e(INTERNAL_LOG_TAG, "Error in onDwellTime callback", t)
+            }
         }
     }
 
@@ -59,20 +70,28 @@ internal object EventDispatcher {
      * Dispatches a [VisibilityEvent.Impression] event, typically for [TrackingMode.FIRST_IMPRESSION].
      */
     fun dispatchImpressionEvent(
-        itemKey: Any,
+        internalKey: Any,
         time: Long,
         scrollDirection: ScrollDirection,
         state: TrackerState,
         config: CozyConfig,
         onImpression: ((VisibilityEvent.Impression) -> Unit)?
     ) {
-        val sessionData = state.activeSessions[itemKey] ?: return // Get session data, but don't remove yet if still active
-        val wasAlreadyDispatched = state.isStaleAndMark(itemKey)
-        val firstSeenTime = state.getFirstSeenTime(itemKey) ?: time
+        // Get session data, but don't remove yet if still active.
+        val sessionData = state.activeSessions[internalKey] ?: return
+        val wasAlreadyDispatched = state.checkIfStaleAndMark(internalKey)
+
+        // Respect trackStaleContent by only emitting the first impression when
+        // it is disabled.
+        if (wasAlreadyDispatched && !config.trackStaleContent) {
+            return
+        }
+
+        val firstSeenTime = state.getFirstSeenTime(internalKey) ?: time
 
         val event = VisibilityEvent.Impression(
-            key = itemKey,
-            isStaleContent = wasAlreadyDispatched,
+            key = sessionData.analyticsKey,
+            isStaleContent = wasAlreadyDispatched && config.trackStaleContent,
             firstSeenAtMs = firstSeenTime,
             lastSeenAtMs = time,
             contentMetadata = ContentMetadata(
@@ -85,7 +104,11 @@ internal object EventDispatcher {
         if (BuildConfig.DEBUG) {
             Log.d(INTERNAL_LOG_TAG, "Dispatching Impression Event: $event")
         }
-        onImpression?.invoke(event)
+        try {
+            onImpression?.invoke(event)
+        } catch (t: Throwable) {
+            Log.e(INTERNAL_LOG_TAG, "Error in onImpression callback", t)
+        }
     }
 
     /**

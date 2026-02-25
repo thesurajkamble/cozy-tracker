@@ -1,9 +1,9 @@
-package com.surajkamble.cozy_tracker.lib.util
+package com.surajkamble.cozy_tracker.lib.internal
 
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.lazy.LazyListItemInfo
 import androidx.compose.foundation.lazy.LazyListLayoutInfo
-import com.surajkamble.cozy_tracker.lib.config.CozyConfig
+import com.surajkamble.cozy_tracker.lib.api.CozyConfig
 import kotlin.math.max
 import kotlin.math.min
 
@@ -13,10 +13,10 @@ import kotlin.math.min
 internal object VisibilityCalculator {
 
     /**
-     * Determines if a [LazyListItemInfo] is "visible" based on the [CozyConfig].
+     * Determines if a [androidx.compose.foundation.lazy.LazyListItemInfo] is "visible" based on the [com.surajkamble.cozy_tracker.lib.api.CozyConfig].
      *
      * @param itemInfo The item to check.
-     * @param layoutInfo The [LazyListLayoutInfo] used to get viewport and orientation details.
+     * @param layoutInfo The [androidx.compose.foundation.lazy.LazyListLayoutInfo] used to get viewport and orientation details.
      * @param config The configuration to use for the visibility check.
      * @return `true` if the item meets the minimum visibility percentage, `false` otherwise.
      */

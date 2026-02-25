@@ -1,8 +1,20 @@
 package com.surajkamble.cozy_tracker.lib.model
 
 /**
- * Represents a sealed class for various visibility events triggered by the tracker.
- * This provides a type-safe way for users to handle different event types.
+ * Represents the different visibility events that Cozy can emit.
+ *
+ * The [key] on each event is the logical content identifier exposed by the
+ * library. By default this is the Compose lazy list item's key, but when a
+ * custom `keyExtractor` is supplied to `Modifier.cozyTrack` it will be the
+ * result of that extractor instead.
+ *
+ * The [isStaleContent] flag is driven by [CozyConfig.trackStaleContent]:
+ * - When `trackStaleContent = false`, only the first event for a key is
+ *   emitted. Subsequent exposures are ignored and `isStaleContent` is always
+ *   `false`.
+ * - When `trackStaleContent = true`, subsequent events for a key are emitted
+ *   with `isStaleContent = true`, allowing consumers to distinguish fresh vs
+ *   stale content.
  */
 sealed class VisibilityEvent {
 
@@ -23,7 +35,7 @@ sealed class VisibilityEvent {
      * @param totalSeenTimeMs The total accumulated visible time for this key across all sessions.
      * @param contentMetadata Additional metadata about the content, including its position, scroll direction, and content type.
      */
-    data class DwellTime( // Renamed to DwellTime for clarity within sealed class
+    data class DwellTime(
         override val key: Any,
         override val isStaleContent: Boolean,
         val visibleDurationMs: Long,
@@ -58,7 +70,7 @@ sealed class VisibilityEvent {
      * @param timestampMs The timestamp (ms) when the app went to the background.
      * @param flushedItems A list of keys for items that had their sessions ended during this flush.
      */
-    data class AppBackgrounded( // New event type for lifecycle awareness
+    data class AppBackgrounded(
         val timestampMs: Long,
         val flushedItems: List<Any>
     ) : VisibilityEvent() {

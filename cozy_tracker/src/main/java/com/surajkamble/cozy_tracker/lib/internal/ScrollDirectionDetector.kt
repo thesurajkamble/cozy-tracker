@@ -1,4 +1,4 @@
-package com.surajkamble.cozy_tracker.lib.util
+package com.surajkamble.cozy_tracker.lib.internal
 
 import androidx.compose.foundation.lazy.LazyListLayoutInfo
 import com.surajkamble.cozy_tracker.lib.model.ScrollDirection
