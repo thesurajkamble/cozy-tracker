@@ -29,9 +29,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.surajkamble.cozy_tracker.lib.api.cozyTracker
-import com.surajkamble.cozy_tracker.lib.config.CozyConfig
-import com.surajkamble.cozy_tracker.lib.config.TrackingMode
+import com.surajkamble.cozy_tracker.lib.api.CozyConfig
+import com.surajkamble.cozy_tracker.lib.api.TrackingMode
+import com.surajkamble.cozy_tracker.lib.api.cozyTrack
 import com.surajkamble.cozy_tracker.lib.model.VisibilityEvent
 import com.surajkamble.cozy_tracker.ui.theme.Cozy_trackerTheme
 
@@ -101,10 +101,12 @@ private fun VerticalList(items: List<SampleItem>) {
         modifier = Modifier
             .fillMaxWidth()
             .height(300.dp)
-            .cozyTracker(
+            .cozyTrack(
                 listState = listState,
                 onDwellTime = { event -> onVisibilityEvent("Vertical", event) },
-                config = CozyConfig(minimumVisiblePercent = 0.6f)
+                configure = {
+                    minimumVisiblePercent = 0.6f
+                }
             )
     ) {
         items(items, key = { it.id }, contentType = { "vertical-item" }) { item ->
@@ -130,13 +132,13 @@ private fun HorizontalList(items: List<SampleItem>) {
         state = listState,
         modifier = Modifier
             .fillMaxWidth()
-            .cozyTracker(
+            .cozyTrack(
                 listState = listState,
                 onImpression = { event -> onVisibilityEvent("Horizontal", event) },
-                config = CozyConfig(
-                    minimumVisiblePercent = 0.75f,
+                configure = {
+                    minimumVisiblePercent = 0.75f
                     trackingMode = TrackingMode.FIRST_IMPRESSION
-                )
+                }
             ),
         contentPadding = PaddingValues(horizontal = 8.dp)
     ) {

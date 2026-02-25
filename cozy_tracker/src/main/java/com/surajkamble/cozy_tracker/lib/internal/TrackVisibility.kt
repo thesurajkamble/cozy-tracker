@@ -8,14 +8,11 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import com.surajkamble.cozy_tracker.lib.internal.Cozy
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.collect
 
 @OptIn(FlowPreview::class)
 @Composable
@@ -40,8 +37,11 @@ internal fun TrackVisibility(listState: LazyListState, tracker: Cozy) {
             .distinctUntilChanged()
             .filter { it.visibleItemsInfo.isNotEmpty() }
             .debounce(tracker.config.debounceIntervalMs)
-            .onEach { layoutInfo -> tracker.processVisibility(layoutInfo) }
-            .flowOn(Dispatchers.Default)
-            .launchIn(this)
+            // All interaction with Compose UI types happens on the main thread.
+            // The tracking engine itself only works with these types on this
+            // coroutine to keep things main-safe.
+            .collect { layoutInfo ->
+                tracker.processVisibility(layoutInfo)
+            }
     }
 }

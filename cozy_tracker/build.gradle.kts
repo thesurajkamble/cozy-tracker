@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.compose)
+    id("maven-publish")
 }
 
 android {
@@ -33,6 +34,12 @@ android {
         compose = true
         buildConfig = true
     }
+
+    publishing {
+        singleVariant("release") {
+            withSourcesJar()
+        }
+    }
 }
 
 dependencies {
@@ -45,9 +52,30 @@ dependencies {
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.compose.material3)
     implementation(libs.androidx.lifecycle.runtime.ktx)
-    implementation("androidx.lifecycle:lifecycle-runtime-compose")
+    implementation(libs.androidx.lifecycle.runtime.compose)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+}
+
+group = (findProperty("GROUP") as String?) ?: "io.github.surajkamble"
+version = (findProperty("VERSION_NAME") as String?) ?: "0.1.0-SNAPSHOT"
+
+afterEvaluate {
+    publishing {
+        publications {
+            create<MavenPublication>("release") {
+                from(components["release"])
+
+                artifactId = (findProperty("POM_ARTIFACT_ID") as String?) ?: "cozy-tracker"
+
+                pom {
+                    name.set("Cozy Tracker")
+                    description.set("A comppose lazy list view time tracker")
+                    url.set("https://github.com/surajkamble/cozy_tracker")
+                }
+            }
+        }
+    }
 }

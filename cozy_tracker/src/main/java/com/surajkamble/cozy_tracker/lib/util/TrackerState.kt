@@ -6,7 +6,16 @@ import java.util.concurrent.ConcurrentHashMap
 /**
  * A data class holding the state for an active visibility session.
  */
-internal data class SessionData(val startTimeMs: Long, val itemInfo: LazyListItemInfo)
+internal data class SessionData(
+    val startTimeMs: Long,
+    val itemInfo: LazyListItemInfo,
+    /**
+     * Logical key that will be exposed to consumers via [VisibilityEvent.key].
+     * This may differ from [LazyListItemInfo.key] when a custom key extractor
+     * is used, but internal tracking still uses the Compose key.
+     */
+    val analyticsKey: Any
+)
 
 /**
  * Encapsulates the complete, thread-safe state management for the tracking engine.
@@ -39,8 +48,8 @@ internal class TrackerState {
     /**
      * Starts a new visibility session for a given item.
      */
-    fun startSession(itemInfo: LazyListItemInfo, time: Long) {
-        activeSessions[itemInfo.key] = SessionData(time, itemInfo)
+    fun startSession(itemInfo: LazyListItemInfo, time: Long, analyticsKey: Any) {
+        activeSessions[itemInfo.key] = SessionData(time, itemInfo, analyticsKey)
         firstSeenTimestamps.putIfAbsent(itemInfo.key, time)
     }
 
@@ -64,7 +73,7 @@ internal class TrackerState {
      * Checks if a key has been dispatched before and marks it as dispatched.
      * @return `true` if the key had been dispatched previously, `false` otherwise.
      */
-    fun isStaleAndMark(key: Any): Boolean {
+    fun checkIfStaleAndMark(key: Any): Boolean {
         return dispatchedKeys.putIfAbsent(key, true) != null
     }
 
