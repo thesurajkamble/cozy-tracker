@@ -1,11 +1,12 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.compose)
-    id("maven-publish")
+    id("signing")
+    id("com.vanniktech.maven.publish") version "0.30.0"
 }
 
 android {
-    namespace = "com.surajkamble.cozy_tracker.lib"
+    namespace = "com.thesurajkamble.cozy_tracker.lib"
     compileSdk {
         version = release(36)
     }
@@ -34,12 +35,6 @@ android {
         compose = true
         buildConfig = true
     }
-
-    publishing {
-        singleVariant("release") {
-            withSourcesJar()
-        }
-    }
 }
 
 dependencies {
@@ -59,7 +54,7 @@ dependencies {
     androidTestImplementation(libs.androidx.espresso.core)
 }
 
-group = (findProperty("GROUP") as String?) ?: "io.github.surajkamble"
+group = (findProperty("GROUP") as String?) ?: "io.github.thesurajkamble"
 version = (findProperty("VERSION_NAME") as String?) ?: "0.1.0-SNAPSHOT"
 
 afterEvaluate {
@@ -68,14 +63,84 @@ afterEvaluate {
             create<MavenPublication>("release") {
                 from(components["release"])
 
-                artifactId = (findProperty("POM_ARTIFACT_ID") as String?) ?: "cozy-tracker"
+                groupId = "io.github.thesurajkamble"
+                artifactId = "cozy-tracker"
+                version = "0.1.0"
 
                 pom {
                     name.set("Cozy Tracker")
-                    description.set("A comppose lazy list view time tracker")
-                    url.set("https://github.com/surajkamble/cozy_tracker")
+                    description.set("A Compose Lazy List view time tracker")
+                    inceptionYear.set("2026")
+                    url.set("https://github.com/thesurajkamble/cozy-tracker")
+                    licenses {
+                        license {
+                            name.set("The Apache License, Version 2.0")
+                            url.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
+                        }
+                    }
+                    developers {
+                        developer {
+                            id.set("thesurajkamble")
+                            name.set("Suraj Kamble")
+                            url.set("https://github.com/surajkamble/")
+                        }
+                    }
+                    scm {
+                        url.set("https://github.com/thesurajkamble/cozy-tracker")
+                        connection.set("scm:git:git://github.com/surajkamble/cozy_tracker.git")
+                        developerConnection.set("scm:git:ssh://github.com/thesurajkamble/cozy-tracker.git")
+                    }
                 }
             }
         }
     }
 }
+
+//afterEvaluate {
+//    publishing {
+//        publications {
+//            create<MavenPublication>("release") {
+//                from(components["release"])
+//
+//                groupId = "io.github.thesurajkamble"
+//                artifactId = "cozy-tracker"
+//                version = "0.1.0"
+//
+//                pom {
+//                    name.set("Cozy_Tracker")
+//                    description.set("A Compose Lazy List view time tracker")
+//                    url.set("https://github.com/thesurajkamble/cozy-tracker")
+//
+//                    licenses {
+//                        license {
+//                            name.set("The Apache License, Version 2.0")
+//                            url.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
+//                        }
+//                    }
+//                    developers {
+//                        developer {
+//                            id.set("surajkamble")
+//                            name.set("Suraj Kamble")
+//                        }
+//                    }
+//                    scm {
+//                        connection.set("scm:git:github.com/surajkamble/cozy_tracker.git")
+//                        developerConnection.set("scm:git:ssh://github.com/surajkamble/cozy_tracker.git")
+//                        url.set("https://github.com/thesurajkamble/cozy-tracker")
+//                    }
+//                }
+//            }
+//        }
+//
+//        repositories {
+//            maven {
+//                name = "MavenCentral"
+//                url = uri("https://central.sonatype.com/api/v1/publisher/upload")
+//                credentials {
+//                    username = project.findProperty("sonatypeUsername")?.toString()
+//                    password = project.findProperty("sonatypePassword")?.toString()
+//                }
+//            }
+//        }
+//    }
+//}
