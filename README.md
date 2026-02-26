@@ -34,7 +34,7 @@ A lightweight, non-intrusive Jetpack Compose library for tracking item visibilit
 
     ```kotlin
     dependencies {
-        implementation("com.github.surajkamble:cozy_tracker:cozy_trackerV1.0.1")
+        implementation("com.github.thesurajkamble:cozy_tracker:cozy_trackerV1.0.1")
     }
     ```
 
