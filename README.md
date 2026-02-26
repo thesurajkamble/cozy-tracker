@@ -23,7 +23,7 @@ A lightweight, non-intrusive Jetpack Compose library for tracking item visibilit
     dependencyResolutionManagement {
         repositories {
             // ... other repositories
-            maven { url 'https://jitpack.io' }
+           maven { url = uri("https://jitpack.io") }
         }
     }
     ```
