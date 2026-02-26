@@ -1,8 +1,7 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.compose)
-    id("signing")
-    id("com.vanniktech.maven.publish") version "0.30.0"
+    id("maven-publish")
 }
 
 android {
@@ -34,6 +33,12 @@ android {
     buildFeatures {
         compose = true
         buildConfig = true
+    }
+    publishing {
+        singleVariant("release") {
+            withSourcesJar()
+            withJavadocJar()
+        }
     }
 }
 
@@ -95,52 +100,3 @@ afterEvaluate {
         }
     }
 }
-
-//afterEvaluate {
-//    publishing {
-//        publications {
-//            create<MavenPublication>("release") {
-//                from(components["release"])
-//
-//                groupId = "io.github.thesurajkamble"
-//                artifactId = "cozy-tracker"
-//                version = "0.1.0"
-//
-//                pom {
-//                    name.set("Cozy_Tracker")
-//                    description.set("A Compose Lazy List view time tracker")
-//                    url.set("https://github.com/thesurajkamble/cozy-tracker")
-//
-//                    licenses {
-//                        license {
-//                            name.set("The Apache License, Version 2.0")
-//                            url.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
-//                        }
-//                    }
-//                    developers {
-//                        developer {
-//                            id.set("surajkamble")
-//                            name.set("Suraj Kamble")
-//                        }
-//                    }
-//                    scm {
-//                        connection.set("scm:git:github.com/surajkamble/cozy_tracker.git")
-//                        developerConnection.set("scm:git:ssh://github.com/surajkamble/cozy_tracker.git")
-//                        url.set("https://github.com/thesurajkamble/cozy-tracker")
-//                    }
-//                }
-//            }
-//        }
-//
-//        repositories {
-//            maven {
-//                name = "MavenCentral"
-//                url = uri("https://central.sonatype.com/api/v1/publisher/upload")
-//                credentials {
-//                    username = project.findProperty("sonatypeUsername")?.toString()
-//                    password = project.findProperty("sonatypePassword")?.toString()
-//                }
-//            }
-//        }
-//    }
-//}
