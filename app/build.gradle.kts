@@ -38,7 +38,7 @@ android {
 }
 
 dependencies {
-    implementation("io.github.surajkamble:cozy-tracker:0.1.0-SNAPSHOT")
+    implementation(project(":cozy_tracker"))
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
