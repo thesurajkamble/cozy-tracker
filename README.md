@@ -89,6 +89,27 @@ private fun MyTrackedList() {
 }
 ```
 
+### A Note on Keys
+
+**Providing a stable and unique `key` for each item in your `LazyColumn` or `LazyRow` is mandatory for Cozy Tracker to work correctly.**
+
+-   **Why?** Cozy Tracker uses this `key` as the fundamental identifier to track an item's state across recompositions and scroll events. It allows the library to accumulate dwell time accurately and know when an item is being seen for the first time.
+
+-   **What happens if keys are not provided?** If you do not provide keys, `LazyColumn` will use the item's position as its key. This is unstable. If an item is added, removed, or reordered in your list, its position changes, and Cozy Tracker will incorrectly treat it as a brand new item, losing all its previous tracking history. This will lead to inaccurate `totalSeenTimeMs` and `isStaleContent` values.
+
+-   **Best Practice:** Always use a stable and unique identifier from your data model as the key. For example, if you are loading data from an API, use the `articleId`, `productId`, or `videoId` from your API response.
+
+```kotlin
+// GOOD: Using a stable ID from your data
+items(items, key = { item -> item.id }) { ... }
+
+// AVOID: Relying on the unstable item index
+itemsIndexed(items) { index, item ->
+    // Using index as a key can lead to tracking errors!
+    // ...
+}
+```
+
 ## Configuration
 
 You can set global defaults for all trackers by wrapping your app's content with `ProvideCozyConfig` compositionLocal.
