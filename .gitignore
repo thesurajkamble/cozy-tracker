@@ -13,3 +13,6 @@
 .externalNativeBuild
 .cxx
 local.properties
+secring.gpg
+secret_key.asc
+gradle.properties

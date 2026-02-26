@@ -1,7 +1,7 @@
 package com.surajkamble.cozy_tracker.lib.util
 
 import android.util.Log
-import com.surajkamble.cozy_tracker.lib.BuildConfig
+//import com.surajkamble.cozy_tracker.lib.BuildConfig
 import com.surajkamble.cozy_tracker.lib.api.CozyConfig
 import com.surajkamble.cozy_tracker.lib.model.ContentMetadata
 import com.surajkamble.cozy_tracker.lib.model.ScrollDirection
@@ -54,9 +54,9 @@ internal object EventDispatcher {
                 )
             )
 
-            if (BuildConfig.DEBUG) {
-                Log.d(INTERNAL_LOG_TAG, "Dispatching DwellTime Event: $event")
-            }
+//            if (BuildConfig.DEBUG) {
+//                Log.d(INTERNAL_LOG_TAG, "Dispatching DwellTime Event: $event")
+//            }
 
             try {
                 onDwellTime?.invoke(event)
@@ -101,9 +101,9 @@ internal object EventDispatcher {
             )
         )
 
-        if (BuildConfig.DEBUG) {
-            Log.d(INTERNAL_LOG_TAG, "Dispatching Impression Event: $event")
-        }
+//        if (BuildConfig.DEBUG) {
+//            Log.d(INTERNAL_LOG_TAG, "Dispatching Impression Event: $event")
+//        }
         try {
             onImpression?.invoke(event)
         } catch (t: Throwable) {
