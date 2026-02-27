@@ -2,7 +2,7 @@ jdk:
   - openjdk17
 
 before_install:
-  - ./gradlew :cozy_tracker:assembleRelease
+  - chmod +x gradlew
 
 install:
-  - ./gradlew :cozy_tracker:publishToMavenLocal
+  - ./gradlew :cozy_tracker:publishToMavenLocal -Dorg.gradle.jvmargs="-Xmx4g" -x test -x dokkaHtml -x dokkaJavadoc
