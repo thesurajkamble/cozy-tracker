@@ -64,7 +64,7 @@ private fun MyTrackedList() {
         state = listState,
         modifier = Modifier
             .fillMaxSize()
-            .cozyTracker(
+            .cozyTrack(
                 listState = listState,
                 // Listen for dwell time events
                 onDwellTime = { event ->
