@@ -20,7 +20,7 @@ android {
 
     buildTypes {
         release {
-            isMinifyEnabled = true
+            isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -69,9 +69,9 @@ afterEvaluate {
             create<MavenPublication>("release") {
                 from(components["release"])
 
-                groupId = "io.github.thesurajkamble"
+                groupId = "com.github.thesurajkamble"
                 artifactId = "cozy-tracker"
-                version = "2.0.0"
+                version = "2.1.0"
 
                 pom {
                     name.set("Cozy Tracker")
