@@ -9,6 +9,7 @@ android {
     compileSdk {
         version = release(36)
     }
+    ndkVersion = "26.1.10909125"
 
     defaultConfig {
         minSdk = 23
