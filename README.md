@@ -1,3 +1,5 @@
+//Verions below 2.1.1 are not stable. use 2.1.1 and above
+
 # Cozy Tracker
 A lightweight, non-intrusive Jetpack Compose library for tracking item visibility and dwell time in `LazyColumn` and `LazyRow`.
 
@@ -33,8 +35,9 @@ A lightweight, non-intrusive Jetpack Compose library for tracking item visibilit
     Add the Cozy Tracker dependency to your module's `build.gradle.kts` file. Make sure to replace `cozy_trackerV1.0.1` with the latest release tag.
 
     ```kotlin
+    // use the latest release tag. 
     dependencies {
-        implementation("com.github.thesurajkamble:cozy_tracker:cozy_trackerV1.0.1")
+           implementation("com.github.thesurajkamble:cozy-tracker:cozy_trackerV2.1.1")
     }
     ```
 
