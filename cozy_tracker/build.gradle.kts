@@ -61,7 +61,7 @@ dependencies {
 }
 
 group = (findProperty("GROUP") as String?) ?: "io.github.thesurajkamble"
-version = (findProperty("VERSION_NAME") as String?) ?: "0.1.0-SNAPSHOT"
+version = (findProperty("VERSION_NAME") as String?) ?: "1.0.2"
 
 afterEvaluate {
     publishing {
@@ -71,7 +71,7 @@ afterEvaluate {
 
                 groupId = "io.github.thesurajkamble"
                 artifactId = "cozy-tracker"
-                version = "0.1.0"
+                version = "1.0.2"
 
                 pom {
                     name.set("Cozy Tracker")
