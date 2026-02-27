@@ -1,2 +1,8 @@
 jdk:
   - openjdk17
+
+before_install:
+  - ./gradlew :cozy_tracker:assembleRelease
+
+install:
+  - ./gradlew :cozy_tracker:publishToMavenLocal
