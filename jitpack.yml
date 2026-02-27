@@ -5,4 +5,5 @@ before_install:
   - chmod +x gradlew
 
 install:
-  - ./gradlew :cozy_tracker:publishToMavenLocal -Dorg.gradle.jvmargs="-Xmx4g" -x test -x dokkaHtml -x dokkaJavadoc
+  - ./gradlew :cozy_tracker:publishToMavenLocal -Dorg.gradle.jvmargs="-Xmx4g" -x test
+    
